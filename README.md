@@ -19,6 +19,30 @@ ExpenseFlow is a three-tier Expense Tracker SaaS starter built for Azure DevOps 
 - Dockerfiles and local `docker-compose.yml`
 - Azure Pipelines starter YAML
 
+## Screenshots
+
+### Login Experience
+
+![ExpenseFlow login screen](docs/images/login-screen.png)
+
+### Executive Dashboard
+
+![ExpenseFlow premium dashboard overview](docs/images/dashboard-premium-overview.png)
+
+### Analytics And Budget Insights
+
+![ExpenseFlow analytics dashboard](docs/images/dashboard-analytics.png)
+
+### Activity Feed And Notifications
+
+![ExpenseFlow recent activity and async notifications](docs/images/dashboard-activity-notifications.png)
+
+### Development And Troubleshooting View
+
+This project also includes realistic local debugging and API troubleshooting as part of the DevOps learning journey.
+
+![ExpenseFlow dashboard debug and network troubleshooting](docs/images/dashboard-error-debug.png)
+
 ## Demo Users
 
 - `admin@northstar.dev / Admin@123`
@@ -57,6 +81,9 @@ Backend API: `http://localhost:8000`
 - `/api/notifications`
 - `/api/uploads`
 
+## Azure DevOps
 
+- Roadmap: [docs/azure-devops-roadmap.md](/Users/mdqamarhashmi/Documents/Projects/untitled%20folder/docs/azure-devops-roadmap.md)
+- Pipeline setup: [docs/azure-pipeline-setup.md](/Users/mdqamarhashmi/Documents/Projects/untitled%20folder/docs/azure-pipeline-setup.md)
 
 

@@ -9,6 +9,6 @@ frontend/.next/
 frontend/node_modules/
 coverage/
 dist/
-docs/
+docs/azure*
 azure-pipelines.yml
 
