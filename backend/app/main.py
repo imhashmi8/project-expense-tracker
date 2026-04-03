@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
 
 from app.api.router import api_router
 from app.core.config import get_settings
@@ -11,6 +12,8 @@ from app.core.database import AsyncSessionLocal, engine
 from app.db.base import Base
 from app.db.seed import seed_demo_data
 from app.models import Budget, Expense, Notification, Organization, User
+from app.services.cache import cache
+from app.services.storage import storage_service
 
 settings = get_settings()
 
@@ -55,4 +58,34 @@ app.mount("/uploads", StaticFiles(directory=str(settings.uploads_dir_path)), nam
 @app.get("/health")
 async def healthcheck() -> JSONResponse:
     _ = (Budget, Expense, Notification, Organization, User)
-    return JSONResponse({"status": "ok", "service": settings.app_name})
+    checks = {
+        "backend": "connected",
+        "database": "not_connected",
+        "redis": "not_connected",
+        "blob_storage": "not_connected",
+    }
+
+    try:
+        async with engine.connect() as connection:
+            await connection.execute(text("SELECT 1"))
+        checks["database"] = "connected"
+    except Exception:
+        pass
+
+    if await cache.ping():
+        checks["redis"] = "connected"
+
+    if await storage_service.healthcheck():
+        checks["blob_storage"] = "connected"
+
+    overall_status = "ok" if all(value == "connected" for value in checks.values()) else "degraded"
+    status_code = 200 if overall_status == "ok" else 503
+
+    return JSONResponse(
+        status_code=status_code,
+        content={
+            "status": overall_status,
+            "service": settings.app_name,
+            "checks": checks,
+        },
+    )

@@ -5,12 +5,14 @@ import type {
   Budget,
   Expense,
   ExpenseStatus,
+  HealthResponse,
   Notification,
   TeamReportResponse,
   User,
 } from "@/lib/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api";
+const SERVICE_BASE = API_BASE.endsWith("/api") ? API_BASE.slice(0, -4) : API_BASE;
 
 export class ApiError extends Error {
   status: number;
@@ -70,6 +72,23 @@ export const api = {
   analytics: () => request<AnalyticsOverview>("/analytics/overview"),
   budgets: () => request<Budget[]>("/budgets"),
   expenses: (limit = 8) => request<Expense[]>(`/expenses?limit=${limit}`),
+  health: async () => {
+    const response = await fetch(`${SERVICE_BASE}/health`);
+    let payload: HealthResponse | null = null;
+    try {
+      payload = (await response.json()) as HealthResponse;
+    } catch {
+      payload = null;
+    }
+
+    if (!response.ok && payload === null) {
+      throw new ApiError("Unable to read health status", response.status);
+    }
+    if (payload === null) {
+      throw new ApiError("Unable to read health status", response.status);
+    }
+    return payload;
+  },
   notifications: () => request<Notification[]>("/notifications"),
   createExpense: (payload: {
     title: string;

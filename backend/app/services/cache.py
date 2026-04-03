@@ -22,6 +22,15 @@ class RedisCache:
             self._client = Redis.from_url(self.settings.redis_url, encoding="utf-8", decode_responses=True)
         return self._client
 
+    async def ping(self) -> bool:
+        client = self._get_client()
+        if client is None:
+            return False
+        try:
+            return bool(await client.ping())
+        except Exception:
+            return False
+
     async def get_json(self, key: str) -> Any | None:
         client = self._get_client()
         if client is None:

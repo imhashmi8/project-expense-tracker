@@ -272,12 +272,24 @@ textarea {
 .brand-block {
   display: flex;
   gap: 14px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .brand-block h1 {
   font-size: 1.45rem;
   line-height: 1.15;
+}
+
+.brand-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.brand-subtle {
+  color: var(--muted);
+  line-height: 1.45;
+  max-width: 26ch;
+  font-size: 0.92rem;
 }
 
 .brand-mark {
@@ -286,9 +298,15 @@ textarea {
   border-radius: 18px;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--accent), #76fff2);
-  color: #04131f;
+  background:
+    linear-gradient(135deg, rgba(24, 209, 181, 0.92), rgba(124, 179, 255, 0.9)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent);
+  color: #031118;
   font-weight: 900;
+  letter-spacing: 0.08em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 14px 30px rgba(14, 28, 52, 0.35);
 }
 
 .sidebar-nav {
@@ -344,6 +362,98 @@ textarea {
   box-shadow: 0 0 18px rgba(24, 209, 181, 0.8);
 }
 
+.pill.connected {
+  border-color: rgba(24, 209, 181, 0.28);
+  background: rgba(24, 209, 181, 0.08);
+}
+
+.pill.not_connected {
+  border-color: rgba(255, 107, 120, 0.35);
+  background: rgba(255, 107, 120, 0.1);
+}
+
+.pill.not_connected .pill-dot {
+  background: var(--danger);
+  box-shadow: 0 0 18px rgba(255, 107, 120, 0.7);
+}
+
+.pill.checking {
+  border-color: rgba(255, 143, 63, 0.28);
+  background: rgba(255, 143, 63, 0.08);
+}
+
+.pill.checking .pill-dot {
+  background: var(--warm);
+  box-shadow: 0 0 18px rgba(255, 143, 63, 0.7);
+}
+
+.service-check-wrap {
+  position: relative;
+}
+
+.service-trigger:disabled {
+  opacity: 0.72;
+  cursor: wait;
+}
+
+.service-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: min(360px, 84vw);
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid var(--panel-border);
+  background: rgba(8, 17, 31, 0.96);
+  box-shadow: var(--shadow);
+  z-index: 20;
+}
+
+.service-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.service-close {
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+}
+
+.service-list {
+  display: grid;
+  gap: 10px;
+}
+
+.service-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.service-ok {
+  color: #92f6df;
+}
+
+.service-bad {
+  color: #ffc1c8;
+}
+
+.service-error {
+  margin-bottom: 12px;
+  color: #ffd5d9;
+}
+
 .stats-grid,
 .dashboard-grid,
 .team-layout {
@@ -353,6 +463,10 @@ textarea {
 
 .stats-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.stats-grid.compact {
+  gap: 14px;
 }
 
 .dashboard-grid,
@@ -366,14 +480,174 @@ textarea {
 
 .stat-card {
   padding: 22px;
+  position: relative;
+  overflow: hidden;
 }
 
 .stat-card.accent {
   background: linear-gradient(135deg, rgba(24, 209, 181, 0.18), rgba(255, 143, 63, 0.12));
 }
 
+.stat-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -30px -30px auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(24, 209, 181, 0.14), transparent 68%);
+}
+
 .stat-card strong {
   font-size: 2rem;
+}
+
+.stat-card p {
+  position: relative;
+  margin-top: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 22ch;
+}
+
+.dashboard-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.8fr);
+  gap: 18px;
+}
+
+.summary-hero-card,
+.summary-side-cards {
+  display: grid;
+  gap: 16px;
+}
+
+.summary-hero-card {
+  padding: 26px;
+  border: 1px solid rgba(24, 209, 181, 0.16);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top right, rgba(83, 240, 213, 0.12), transparent 28%),
+    linear-gradient(135deg, rgba(9, 23, 39, 0.92), rgba(10, 17, 31, 0.8));
+  box-shadow: var(--shadow);
+}
+
+.summary-hero-copy {
+  display: grid;
+  gap: 20px;
+}
+
+.summary-hero-copy h3 {
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  margin-bottom: 10px;
+}
+
+.summary-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.summary-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.summary-total-row strong {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 0.95;
+}
+
+.summary-delta {
+  min-width: 140px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.summary-delta span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+}
+
+.summary-delta strong {
+  font-size: 1.5rem;
+}
+
+.summary-delta.rise strong {
+  color: #92f6df;
+}
+
+.summary-delta.fall strong {
+  color: #ffc1c8;
+}
+
+.sparkline-card {
+  padding: 18px 18px 14px;
+  border-radius: 24px;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.sparkline-copy {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sparkline-copy span,
+.summary-metrics-strip span {
+  color: var(--muted);
+}
+
+.sparkline-copy strong {
+  font-size: 1.35rem;
+}
+
+.mini-sparkline {
+  width: 100%;
+  height: 120px;
+  margin-top: 10px;
+}
+
+.sparkline-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.summary-metrics-strip {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.summary-metrics-strip div {
+  padding: 14px 16px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.summary-metrics-strip strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.15rem;
+}
+
+.summary-side-cards .stat-card {
+  min-height: 150px;
 }
 
 .table-card,
@@ -591,6 +865,7 @@ th {
 @media (max-width: 1120px) {
   .hero-card,
   .auth-card,
+  .dashboard-hero-grid,
   .dashboard-grid,
   .team-layout,
   .stats-grid {
@@ -625,6 +900,7 @@ th {
   .donut-wrap,
   .form-row,
   .budget-row,
+  .summary-metrics-strip,
   .topbar {
     grid-template-columns: 1fr;
     display: grid;

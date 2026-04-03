@@ -101,3 +101,14 @@ export interface TeamReportResponse {
   rows: TeamReportRow[];
   top_categories: CategoryBreakdown[];
 }
+
+export interface HealthResponse {
+  status: "ok" | "degraded";
+  service: string;
+  checks: {
+    backend: "connected" | "not_connected";
+    database: "connected" | "not_connected";
+    redis: "connected" | "not_connected";
+    blob_storage: "connected" | "not_connected";
+  };
+}

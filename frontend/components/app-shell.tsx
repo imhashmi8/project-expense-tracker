@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 
+import { api } from "@/lib/api";
 import { clearSession } from "@/lib/auth";
-import type { User } from "@/lib/types";
+import type { HealthResponse, User } from "@/lib/types";
 
 interface AppShellProps extends PropsWithChildren {
   user: User;
@@ -21,15 +22,45 @@ const navItems = [
 export function AppShell({ user, heading, subheading, children }: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isCheckingServices, setIsCheckingServices] = useState(false);
+  const [showServicePanel, setShowServicePanel] = useState(false);
+  const [serviceStatus, setServiceStatus] = useState<HealthResponse | null>(null);
+  const [serviceError, setServiceError] = useState("");
+
+  async function handleCheckServices() {
+    setIsCheckingServices(true);
+    setServiceError("");
+    setShowServicePanel(true);
+
+    try {
+      const health = await api.health();
+      setServiceStatus(health);
+    } catch {
+      setServiceError("Unable to complete service checks.");
+      setServiceStatus(null);
+    } finally {
+      setIsCheckingServices(false);
+    }
+  }
+
+  const serviceRows = serviceStatus
+    ? [
+        { label: "DB connected", status: serviceStatus.checks.database },
+        { label: "Redis connected", status: serviceStatus.checks.redis },
+        { label: "Blob storage connected", status: serviceStatus.checks.blob_storage },
+        { label: "Backend connected", status: serviceStatus.checks.backend },
+      ]
+    : [];
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand-block">
-          <div className="brand-mark">EF</div>
-          <div>
-            <p className="eyebrow">ExpenseFlow SaaS</p>
-            <h1>Control spend with style</h1>
+          <div className="brand-mark">EX</div>
+          <div className="brand-copy">
+            <p className="eyebrow">ExpenseFlow Command Center</p>
+            <h1>Enterprise Spend Intelligence</h1>
+            <p className="brand-subtle">Policy-aware approvals, analytics, and finance operations in one workspace.</p>
           </div>
         </div>
 
@@ -80,9 +111,38 @@ export function AppShell({ user, heading, subheading, children }: AppShellProps)
             <h2>{heading}</h2>
             <p className="subtle">{subheading}</p>
           </div>
-          <div className="pill">
-            <span className="pill-dot" />
-            Tracker Expense App
+          <div className="service-check-wrap">
+            <button className="pill service-trigger" type="button" onClick={handleCheckServices} disabled={isCheckingServices}>
+              <span className="pill-dot" />
+              {isCheckingServices ? "Checking services..." : "Check services"}
+            </button>
+            {showServicePanel ? (
+              <div className="service-panel">
+                <div className="service-panel-header">
+                  <strong>Platform connectivity</strong>
+                  <button className="service-close" type="button" onClick={() => setShowServicePanel(false)}>
+                    Close
+                  </button>
+                </div>
+
+                {serviceError ? <p className="service-error">{serviceError}</p> : null}
+
+                {serviceRows.length ? (
+                  <div className="service-list">
+                    {serviceRows.map((item) => (
+                      <div className="service-row" key={item.label}>
+                        <span>{item.label}</span>
+                        <strong className={item.status === "connected" ? "service-ok" : "service-bad"}>
+                          {item.status === "connected" ? "Yes" : "No"}
+                        </strong>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="subtle">Run the check to see infrastructure connectivity.</p>
+                )}
+              </div>
+            ) : null}
           </div>
         </header>
         {children}

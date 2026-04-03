@@ -5,6 +5,7 @@ import { startTransition, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { AppShell } from "@/components/app-shell";
+import { DashboardHero } from "@/components/dashboard-hero";
 import { BudgetBars, CategoryDonut, SpendTrendChart } from "@/components/charts";
 import { ExpenseTable, NotificationList } from "@/components/expense-table";
 import { StatCard } from "@/components/stat-card";
@@ -149,11 +150,21 @@ export default function DashboardPage() {
       {loading ? <div className="empty-state">Loading dashboard...</div> : null}
       {error ? <div className="banner-error">{error}</div> : null}
 
-      <section className="stats-grid">
-        <StatCard label="Total spend" value={money.format(analytics.total_spend)} tone="accent" />
-        <StatCard label="Approved spend" value={money.format(analytics.approved_spend)} />
-        <StatCard label="Pending expenses" value={String(analytics.pending_expenses)} />
-        <StatCard label="Team members" value={String(analytics.team_members || budgets.length)} />
+      <DashboardHero analytics={analytics} expenses={expenses} user={user} />
+
+      <section className="stats-grid compact">
+        <StatCard label="Total spend" value={money.format(analytics.total_spend)} hint="Month-to-date tracked expenses" />
+        <StatCard label="Approved spend" value={money.format(analytics.approved_spend)} hint="Cleared by reviewers" />
+        <StatCard
+          label="Pending expenses"
+          value={String(analytics.pending_expenses)}
+          hint="Awaiting a decision"
+        />
+        <StatCard
+          label="Team members"
+          value={String(analytics.team_members || budgets.length)}
+          hint="Users active in this org"
+        />
       </section>
 
       <section className="dashboard-grid">
