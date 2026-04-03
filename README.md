@@ -81,9 +81,6 @@ Backend API: `http://localhost:8000`
 - `/api/notifications`
 - `/api/uploads`
 
-## Azure DevOps
 
-- Roadmap: [docs/azure-devops-roadmap.md](/Users/mdqamarhashmi/Documents/Projects/untitled%20folder/docs/azure-devops-roadmap.md)
-- Pipeline setup: [docs/azure-pipeline-setup.md](/Users/mdqamarhashmi/Documents/Projects/untitled%20folder/docs/azure-pipeline-setup.md)
 
 
