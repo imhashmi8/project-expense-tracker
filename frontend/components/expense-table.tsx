@@ -2,9 +2,9 @@
 
 import type { Expense, Notification } from "@/lib/types";
 
-const money = new Intl.NumberFormat("en-US", {
+const money = new Intl.NumberFormat("en-IN", {
   style: "currency",
-  currency: "USD",
+  currency: "INR",
 });
 
 export function ExpenseTable({ expenses }: { expenses: Expense[] }) {

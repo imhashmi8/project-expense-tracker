@@ -74,7 +74,7 @@ class Expense(Base, TimestampMixin):
     title: Mapped[str] = mapped_column(String(140))
     category: Mapped[str] = mapped_column(String(80), index=True)
     amount: Mapped[Decimal] = mapped_column(Numeric(12, 2))
-    currency: Mapped[str] = mapped_column(String(8), default="USD")
+    currency: Mapped[str] = mapped_column(String(8), default="INR")
     status: Mapped[ExpenseStatus] = mapped_column(Enum(ExpenseStatus), default=ExpenseStatus.PENDING, index=True)
     spent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), index=True)
     notes: Mapped[str | None] = mapped_column(Text, default=None)

@@ -12,9 +12,9 @@ import { api, ApiError } from "@/lib/api";
 import { getStoredUser, getToken } from "@/lib/auth";
 import type { AnalyticsOverview, Budget, Expense, Notification, User } from "@/lib/types";
 
-const money = new Intl.NumberFormat("en-US", {
+const money = new Intl.NumberFormat("en-IN", {
   style: "currency",
-  currency: "USD",
+  currency: "INR",
   maximumFractionDigits: 0,
 });
 
@@ -42,7 +42,7 @@ export default function DashboardPage() {
     title: "Hotel stay for client workshop",
     category: "Travel",
     amount: "460",
-    currency: "USD",
+    currency: "INR",
     spent_at: new Date().toISOString().slice(0, 16),
     notes: "Two-night stay near client office",
   });
@@ -105,7 +105,7 @@ export default function DashboardPage() {
         title: "",
         category: "Travel",
         amount: "",
-        currency: "USD",
+        currency: "INR",
         spent_at: new Date().toISOString().slice(0, 16),
         notes: "",
       });

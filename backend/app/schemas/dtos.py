@@ -79,7 +79,7 @@ class ExpenseCreate(BaseModel):
     title: str = Field(min_length=3, max_length=140)
     category: str = Field(min_length=2, max_length=80)
     amount: Decimal = Field(gt=0, max_digits=12, decimal_places=2)
-    currency: str = Field(default="USD", max_length=8)
+    currency: str = Field(default="INR", max_length=8)
     spent_at: datetime
     notes: str | None = Field(default=None, max_length=500)
     receipt_url: str | None = Field(default=None, max_length=255)
