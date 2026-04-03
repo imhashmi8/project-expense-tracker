@@ -1,9 +1,11 @@
+from collections import defaultdict
 from datetime import datetime
 
 from fastapi import APIRouter, Depends
 from pydantic import TypeAdapter
-from sqlalchemy import case, func, select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
@@ -34,40 +36,13 @@ async def overview(
     if personal_only:
         filters.append(Expense.owner_id == current_user.id)
 
-    totals = await db.execute(
-        select(
-            func.coalesce(func.sum(Expense.amount), 0).label("total_spend"),
-            func.coalesce(
-                func.sum(case((Expense.status == ExpenseStatus.APPROVED, Expense.amount), else_=0)),
-                0,
-            ).label("approved_spend"),
-            func.coalesce(
-                func.sum(case((Expense.status == ExpenseStatus.PENDING, 1), else_=0)),
-                0,
-            ).label("pending_count"),
-        ).where(*filters)
-    )
-    totals_row = totals.one()
-
-    trend_result = await db.execute(
-        select(
-            func.date_trunc("month", Expense.spent_at).label("month"),
-            func.coalesce(func.sum(Expense.amount), 0).label("amount"),
-        )
+    expense_result = await db.execute(
+        select(Expense)
+        .options(selectinload(Expense.owner))
         .where(*filters)
-        .group_by(func.date_trunc("month", Expense.spent_at))
-        .order_by(func.date_trunc("month", Expense.spent_at))
+        .order_by(Expense.spent_at.asc())
     )
-
-    category_result = await db.execute(
-        select(Expense.category, func.coalesce(func.sum(Expense.amount), 0).label("total"))
-        .where(*filters)
-        .group_by(Expense.category)
-        .order_by(func.coalesce(func.sum(Expense.amount), 0).desc())
-        .limit(6)
-    )
-    trend_rows = list(trend_result)
-    category_rows = list(category_result)
+    expenses = list(expense_result.scalars().all())
 
     budgets = await db.execute(
         select(Budget).where(
@@ -77,7 +52,29 @@ async def overview(
     )
     budget_rows = list(budgets.scalars().all())
 
-    category_totals = {row.category: float(row.total or 0) for row in category_rows}
+    total_spend = sum(float(expense.amount) for expense in expenses)
+    approved_spend = sum(float(expense.amount) for expense in expenses if expense.status == ExpenseStatus.APPROVED)
+    pending_expenses = sum(1 for expense in expenses if expense.status == ExpenseStatus.PENDING)
+
+    trend_map: dict[str, float] = defaultdict(float)
+    category_map: dict[str, float] = defaultdict(float)
+    for expense in expenses:
+        trend_map[expense.spent_at.strftime("%b %Y")] += float(expense.amount)
+        category_map[expense.category] += float(expense.amount)
+
+    trend = [
+        {"month": month, "amount": amount}
+        for month, amount in sorted(
+            trend_map.items(),
+            key=lambda item: datetime.strptime(item[0], "%b %Y"),
+        )
+    ]
+    category_breakdown = [
+        CategoryBreakdown(category=category, total=total)
+        for category, total in sorted(category_map.items(), key=lambda item: item[1], reverse=True)[:6]
+    ]
+
+    category_totals = {item.category: item.total for item in category_breakdown}
     budget_performance = [
         BudgetPerformance(
             category=budget.category,
@@ -97,21 +94,12 @@ async def overview(
         team_members = await db.scalar(select(func.count(User.id)).where(User.organization_id == current_user.organization_id)) or 0
 
     response = AnalyticsOverview(
-        total_spend=float(totals_row.total_spend or 0),
-        pending_expenses=int(totals_row.pending_count or 0),
-        approved_spend=float(totals_row.approved_spend or 0),
+        total_spend=total_spend,
+        pending_expenses=pending_expenses,
+        approved_spend=approved_spend,
         team_members=int(team_members),
-        trend=[
-            {
-                "month": row.month.strftime("%b %Y"),
-                "amount": float(row.amount or 0),
-            }
-            for row in trend_rows
-            if row.month
-        ],
-        category_breakdown=[
-            CategoryBreakdown(category=row.category, total=float(row.total or 0)) for row in category_rows if row.category
-        ],
+        trend=trend,
+        category_breakdown=category_breakdown,
         budget_performance=budget_performance,
     )
     await cache.set_json(cache_key, response.model_dump(mode="json"))
