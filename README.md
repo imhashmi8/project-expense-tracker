@@ -57,6 +57,6 @@ Backend API: `http://localhost:8000`
 - `/api/notifications`
 - `/api/uploads`
 
-## Azure DevOps Next
+
 
 
