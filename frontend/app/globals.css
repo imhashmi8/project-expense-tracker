@@ -501,6 +501,37 @@ textarea {
   overflow-x: auto;
 }
 
+.table-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.table-action {
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.table-action:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.table-action.approve {
+  border-color: rgba(24, 209, 181, 0.35);
+  background: rgba(24, 209, 181, 0.12);
+  color: #9af7e8;
+}
+
+.table-action.reject {
+  border-color: rgba(255, 107, 120, 0.35);
+  background: rgba(255, 107, 120, 0.12);
+  color: #ffd1d6;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

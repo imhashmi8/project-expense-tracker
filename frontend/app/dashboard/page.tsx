@@ -38,6 +38,7 @@ export default function DashboardPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [reviewingExpenseId, setReviewingExpenseId] = useState<number | null>(null);
   const [form, setForm] = useState({
     title: "Hotel stay for client workshop",
     category: "Travel",
@@ -79,6 +80,19 @@ export default function DashboardPage() {
     void load();
   }, [router]);
 
+  async function refreshDashboardData() {
+    const [overview, recentExpenses, budgetItems, notificationItems] = await Promise.all([
+      api.analytics(),
+      api.expenses(8),
+      api.budgets(),
+      api.notifications(),
+    ]);
+    setAnalytics(overview);
+    setExpenses(recentExpenses);
+    setBudgets(budgetItems);
+    setNotifications(notificationItems);
+  }
+
   async function createExpense(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setCreating(true);
@@ -93,14 +107,7 @@ export default function DashboardPage() {
         spent_at: new Date(form.spent_at).toISOString(),
         notes: form.notes,
       });
-      const [overview, recentExpenses, notificationItems] = await Promise.all([
-        api.analytics(),
-        api.expenses(8),
-        api.notifications(),
-      ]);
-      setAnalytics(overview);
-      setExpenses(recentExpenses);
-      setNotifications(notificationItems);
+      await refreshDashboardData();
       setForm({
         title: "",
         category: "Travel",
@@ -113,6 +120,19 @@ export default function DashboardPage() {
       setError(err instanceof ApiError ? err.message : "Unable to create expense");
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function handleReview(expenseId: number, status: "approved" | "rejected") {
+    try {
+      setReviewingExpenseId(expenseId);
+      setError("");
+      await api.reviewExpense(expenseId, status);
+      await refreshDashboardData();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Unable to review expense");
+    } finally {
+      setReviewingExpenseId(null);
     }
   }
 
@@ -208,7 +228,12 @@ export default function DashboardPage() {
       </section>
 
       <section className="dashboard-grid single-right">
-        <ExpenseTable expenses={expenses} />
+        <ExpenseTable
+          expenses={expenses}
+          viewerRole={user.role}
+          activeReviewId={reviewingExpenseId}
+          onReview={handleReview}
+        />
         <NotificationList items={notifications} />
       </section>
     </AppShell>

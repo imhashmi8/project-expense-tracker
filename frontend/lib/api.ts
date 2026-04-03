@@ -4,6 +4,7 @@ import type {
   AuthResponse,
   Budget,
   Expense,
+  ExpenseStatus,
   Notification,
   TeamReportResponse,
   User,
@@ -82,6 +83,11 @@ export const api = {
     request<Expense>("/expenses", {
       method: "POST",
       body: JSON.stringify(payload),
+    }),
+  reviewExpense: (expenseId: number, status: ExpenseStatus) =>
+    request<Expense>(`/expenses/${expenseId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
     }),
   teamReport: () => request<TeamReportResponse>("/reports/team"),
   downloadTeamReportCsv: async () => {
