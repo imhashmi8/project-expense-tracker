@@ -1,6 +1,8 @@
 "use client";
 
-import type { Expense, ExpenseStatus, Notification, Role } from "@/lib/types";
+import type { Expense, Notification, Role } from "@/lib/types";
+
+type ReviewAction = "approved" | "rejected";
 
 const money = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -11,7 +13,7 @@ interface ExpenseTableProps {
   expenses: Expense[];
   viewerRole: Role;
   activeReviewId?: number | null;
-  onReview?: (expenseId: number, status: ExpenseStatus) => void;
+  onReview?: (expenseId: number, status: ReviewAction) => void;
 }
 
 export function ExpenseTable({
