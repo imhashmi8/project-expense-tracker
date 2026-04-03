@@ -5,7 +5,7 @@ export default function HomePage() {
     <main className="landing-page">
       <section className="hero-card">
         <div className="hero-copy">
-          <p className="eyebrow">Azure DevOps portfolio project</p>
+          <p className="eyebrow">Expense Tacker Project</p>
           <h1>ExpenseFlow is a modern three-tier SaaS app for expense approvals, analytics, and team reporting.</h1>
           <p className="subtle">
             Built to help you learn boards, CI/CD, secure deployments, and full-stack interview storytelling with a realistic React + FastAPI + PostgreSQL architecture.
@@ -17,6 +17,12 @@ export default function HomePage() {
             <Link className="ghost-button" href="/dashboard">
               Preview dashboard
             </Link>
+          </div>
+          <div className="hero-credit">
+            <span>Designed and developed by Md Qamar Hashmi</span>
+            <a href="https://www.linkedin.com/in/md-qamar-hashmi/" target="_blank" rel="noreferrer">
+              Connect on LinkedIn
+            </a>
           </div>
         </div>
 

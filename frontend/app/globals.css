@@ -188,6 +188,28 @@ p {
   color: var(--muted);
 }
 
+.hero-credit,
+.credit-block {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.hero-credit {
+  margin-top: 22px;
+}
+
+.credit-link,
+.hero-credit a {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.credit-link:hover,
+.hero-credit a:hover {
+  color: #7ff7e6;
+}
+
 .auth-form,
 .expense-form {
   display: grid;

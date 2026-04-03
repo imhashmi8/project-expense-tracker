@@ -59,6 +59,17 @@ export function AppShell({ user, heading, subheading, children }: AppShellProps)
           >
             Log out
           </button>
+          <div className="credit-block">
+            <span>Designed and developed by Md Qamar Hashmi</span>
+            <a
+              href="https://www.linkedin.com/in/md-qamar-hashmi/"
+              target="_blank"
+              rel="noreferrer"
+              className="credit-link"
+            >
+              LinkedIn profile
+            </a>
+          </div>
         </div>
       </aside>
 
@@ -71,7 +82,7 @@ export function AppShell({ user, heading, subheading, children }: AppShellProps)
           </div>
           <div className="pill">
             <span className="pill-dot" />
-            Azure-ready three-tier app
+            Tracker Expense App
           </div>
         </header>
         {children}
