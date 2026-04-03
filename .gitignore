@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.venv
+venv
+__pycache__/
+*.pyc
+backend/uploads/
+frontend/.next/
+frontend/node_modules/
+coverage/
+dist/
+docs/
+azure-pipelines.yml
+
